@@ -17,9 +17,6 @@ class _ProductScreenState extends State<ProductScreen> {
   String? size;
   _ProductScreenState(this.data);
   
-   
-  
-
   @override
   Widget build(BuildContext context) {
     final Color primaryColor = Theme.of(context).primaryColor;
