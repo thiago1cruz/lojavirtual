@@ -40,8 +40,7 @@ class HomeTab extends StatelessWidget {
                   .get(),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
+                  case ConnectionState.none:                 
                     return SliverToBoxAdapter(
                       child: Container(
                         height: 200,
@@ -49,6 +48,13 @@ class HomeTab extends StatelessWidget {
                         child: const Center(child: Text('Não foi possível conectar a internet')),
                       ),
                     );
+                     case ConnectionState.waiting:
+                       return const SliverToBoxAdapter(
+                        child: LinearProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      );
                   default:
                     if (!snapshot.hasData) {
                       return SliverToBoxAdapter(
