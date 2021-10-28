@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lojavirtual/models/user_model.dart';
 import 'package:lojavirtual/screens/login_screen.dart';
 import 'package:lojavirtual/tiles/drawer_tiles.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class CustomDrawer extends StatelessWidget {
 
@@ -27,36 +29,49 @@ class CustomDrawer extends StatelessWidget {
           Container(
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.fromLTRB(0, 16, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Loja Virtual",
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.bold,                      
-                    ),                  
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                   const Text(
-                    'Olá',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              child:ScopedModelDescendant<UserModel>(
+                builder: (context, child, model) =>
+                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Loja Virtual",
+                      style: TextStyle(
+                        fontSize: 34,
+                        fontWeight: FontWeight.bold,                      
+                      ),                  
                     ),
-                  ),
-                   GestureDetector(
-                     child: Text('Entre ou cadastre-se >', 
-                     style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 16, fontWeight: FontWeight.bold),),
-                     onTap: (){
-                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context)=> LoginScreen())
-                       );
-                     },
-                   )
-                ],
+                    const SizedBox(
+                      height: 20,
+                    ),
+                      Text(
+                      "Olá${!model.isLoggedIn()? '':", "+model.userData['name']}",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                     TextButton(
+                       style: TextButton.styleFrom(
+                         padding: const EdgeInsets.all(0), 
+                         alignment: Alignment.centerLeft ),                      
+                       child: Text(!model.isLoggedIn() ? 'Entre ou cadastre-se >' : 'Sair', 
+                       style: TextStyle(color: Theme.of(context).primaryColor, 
+                       fontSize: 16, fontWeight: 
+                       FontWeight.bold),
+                       textAlign: TextAlign.end,
+                       ),
+                       onPressed: (){
+                         if(!model.isLoggedIn()){
+                            Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context)=> LoginScreen()));
+                         }else{
+                           model.signOut();
+                         }
+                       },
+                     )
+                  ],
+                ),
               )
               ),
 

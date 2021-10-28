@@ -1,26 +1,44 @@
 
 import 'package:flutter/material.dart';
+import 'package:lojavirtual/models/user_model.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 
-class SingUpScreen extends StatelessWidget {
+class SingUpScreen extends StatefulWidget {
 
-  SingUpScreen({ Key? key }) : super(key: key);
+  const SingUpScreen({ Key? key }) : super(key: key);
+
+  @override
+  State<SingUpScreen> createState() => _SingUpScreenState();
+}
+
+class _SingUpScreenState extends State<SingUpScreen> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _senhaController = TextEditingController();
+  final _enderecoController = TextEditingController();
 
    final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(      
       appBar: AppBar(
         title: const Text('Criar Conta'),
         centerTitle: true ,        
       ),
-      body: Form(
+      body: ScopedModelDescendant<UserModel>(
+        builder: (context,child,model){
+          if (model.isLoading) {
+              return const Center(child: CircularProgressIndicator(),);            
+          }
+          return Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
             TextFormField(
+              controller: _nameController,
               validator: (text){
                   if(text!.isEmpty) return 'Nome Inválido!';
               },
@@ -30,6 +48,7 @@ class SingUpScreen extends StatelessWidget {
             ),
              const SizedBox(height: 16,),
             TextFormField(
+              controller: _emailController,
               validator: (text){
                   if(text!.isEmpty || !text.contains('@')) return 'Email inválido!';
               },
@@ -40,6 +59,7 @@ class SingUpScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16,),
             TextFormField(
+              controller: _senhaController,
               decoration: const InputDecoration(
                 hintText: 'Senha'
               ),
@@ -50,6 +70,7 @@ class SingUpScreen extends StatelessWidget {
             ),  
             const SizedBox(height: 16,),
             TextFormField(
+              controller: _enderecoController,
               decoration: const InputDecoration(
                 hintText: 'Endereço'
               ),  
@@ -66,7 +87,18 @@ class SingUpScreen extends StatelessWidget {
                 ),
                 onPressed: (){
                   if(_formKey.currentState!.validate()){
-                    
+                    Map<String,dynamic> userData = {
+                        'name':_nameController.text,
+                        'email': _emailController.text,
+                        'address': _enderecoController.text
+                    };
+
+                    model.singUp(
+                      userData: userData, 
+                      pass: _senhaController.text, 
+                      onSucsess: _onSuccess, 
+                      onFail: _onFail
+                      );
                   }
                 }, 
                 child: const Text('Criar',
@@ -78,7 +110,31 @@ class SingUpScreen extends StatelessWidget {
                 ),
             )
           ],
-        ),),
+        ),);
+        },
+      )
     );
+  }
+
+  void _onSuccess(){
+    ScaffoldMessenger.of(context)
+    .showSnackBar( SnackBar(
+      content: const Text('Usuário Criado com sucesso!', ),
+      backgroundColor: Theme.of(context).primaryColor,
+      duration: const Duration(seconds: 2),
+      ));  
+      Future.delayed(const Duration(seconds: 2)).then((_){
+        Navigator.of(context).pop();
+      });  
+  }
+
+  void _onFail(){
+      ScaffoldMessenger.of(context)
+    .showSnackBar( const SnackBar(
+      content: Text('Falh ao criar usuário  !', ),
+      backgroundColor: Colors.redAccent,
+      duration: Duration(seconds: 2),
+      ));  
+    
   }
 }
