@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class UserModel extends Model{
@@ -13,9 +14,11 @@ class UserModel extends Model{
 
   bool isLoading = false;
 
+  static UserModel of(BuildContext context) =>
+  ScopedModel.of<UserModel>(context);
+
   @override
-  void addListener(VoidCallback listener) {
-    // TODO: implement addListener
+  void addListener(VoidCallback listener) {  
     super.addListener(listener);
     _loadCurrentUser();
   }

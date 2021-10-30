@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lojavirtual/models/cart_model.dart';
 import 'package:lojavirtual/models/user_model.dart';
 import 'package:lojavirtual/screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -17,7 +18,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScopedModel<UserModel>(
       model: UserModel(), 
-      child: MaterialApp(
+      child: ScopedModelDescendant<UserModel>(
+        builder: (context, child, model) =>  ScopedModel<CartModel>(
+        model: CartModel(user: model),
+        child: MaterialApp(
       title: 'Loja Virtual',
       theme: ThemeData(      
         primarySwatch: Colors.blue,
@@ -25,7 +29,9 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: HomeScreen(),
+    ),
     )
+      )
       );
   }
 }

@@ -1,7 +1,13 @@
 
 import 'package:carousel_nullsafety/carousel_nullsafety.dart';
 import 'package:flutter/material.dart';
+import 'package:lojavirtual/data/cart_product.dart';
 import 'package:lojavirtual/data/product_data.dart';
+import 'package:lojavirtual/models/cart_model.dart';
+import 'package:lojavirtual/models/user_model.dart';
+import 'package:lojavirtual/screens/login_screen.dart';
+
+import 'cart_screen.dart';
 
 class ProductScreen extends StatefulWidget {
   final ProductData data;
@@ -105,9 +111,27 @@ class _ProductScreenState extends State<ProductScreen> {
                         elevation: 7,
                         shadowColor: Colors.blue,
                       ),
-                    onPressed: size != null  ? (){} : null,                    
-                    child: const Text('Adicionar ao carrinho',
-                    style: TextStyle(
+                    onPressed: size != null  ? (){
+                      if (UserModel.of(context).isLoggedIn()) {
+
+                        CartProduct cartProduct = CartProduct();
+                           cartProduct.size = size!;
+                           cartProduct.quantity = 1;
+                           cartProduct.pid = data.id;
+                           cartProduct.category = data.category; 
+                        CartModel.of(context).addCartItem(cartProduct);
+                         Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context)=>const CartScreen())
+                        );
+                      }else{
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context)=>const LoginScreen())
+                        );
+                      }
+                    } : null,                    
+                    child:  Text(UserModel.of(context).isLoggedIn()?'Adicionar ao carrinho'
+                                  :'Entre para Comprar',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,                      
                     ),
