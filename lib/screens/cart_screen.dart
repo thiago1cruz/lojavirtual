@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:lojavirtual/models/cart_model.dart';
+import 'package:lojavirtual/models/user_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class CartScreen extends StatelessWidget {
@@ -24,6 +25,44 @@ class CartScreen extends StatelessWidget {
             ),
           )
         ],
+      ),
+      body: ScopedModelDescendant<CartModel>(
+        builder: (context, child, model) {
+          if (model.isloading && UserModel.of(context).isLoggedIn()) {
+            return const Center(
+              child: CircularProgressIndicator()
+            );
+          }else if(!UserModel.of(context).isLoggedIn()){
+              return Container(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.remove_shopping_cart_outlined, 
+                      size: 80,
+                      color: Theme.of(context).primaryColor,
+                      ),
+                      const SizedBox(height: 16,),
+                      const Text(
+                        'Faça o login para adicionar produtos!',
+                        style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                       const SizedBox(height: 16,),
+                       ElevatedButton(
+                         onPressed: (){}, 
+                         child: Text('Entrar ')
+                         )
+
+                  ],
+                ),
+              );
+          }
+        },
       ),
     );
   }
