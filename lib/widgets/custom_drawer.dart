@@ -45,7 +45,7 @@ class CustomDrawer extends StatelessWidget {
                       height: 20,
                     ),
                       Text(
-                      "Olá${!model.isLoggedIn()? '':", "+model.userData['name']}",
+                      "Olá${!model.isLoggedIn()? '':", "+model.userData['name'].toString().split(' ').first}",
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

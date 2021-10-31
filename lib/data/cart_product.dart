@@ -1,7 +1,5 @@
 
 
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lojavirtual/data/product_data.dart';
 
@@ -15,7 +13,7 @@ class CartProduct {
   late int quantity;
   late String size;
 
-  late ProductData productData;
+  ProductData? productData;
 
   CartProduct();
 
@@ -32,7 +30,7 @@ class CartProduct {
       'pid': pid,      
       'quantity':quantity,
       'size':size,
-      'product':productData.toResumedMap()
+      // 'product':productData.toResumedMap()
 
   };
 }
