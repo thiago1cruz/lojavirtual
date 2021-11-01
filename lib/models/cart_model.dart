@@ -84,6 +84,49 @@ class CartModel extends Model{
     notifyListeners();
   }
 
+  Future<String?> finishOrder() async {
+    if (products.isEmpty) return null;
+    isloading = true;
+    notifyListeners();
+
+    double productsPrice = getProductsPrice();
+    double shipPrice = getShipPrice();
+    double discount = getDiscountPrice();
+
+    DocumentReference reference = await FirebaseFirestore.instance.collection(
+        'orders').add({
+      'clientId': user.firebaseUser!.uid,
+      'products': products.map((e) => e.toMap()).toList(),
+      'shipPrice': shipPrice,
+      'productsPrice': productsPrice,
+      'discount': discount,
+      'totalPrice': productsPrice - discount + shipPrice,
+      'status': 1
+    });
+
+    await FirebaseFirestore.instance.collection('users').doc(
+        user.firebaseUser!.uid)
+        .collection('orders').doc(reference.id).set({'orderId': reference.id});
+
+    final query = await FirebaseFirestore.instance.collection('users').doc(user.firebaseUser!.uid)
+          .collection('cart').get();
+
+        for(DocumentSnapshot doc in query.docs){
+          doc.reference.delete();
+        }
+
+        products.clear();
+        discountPercentage =0;
+        couponCode = null;
+        isloading = false;
+        notifyListeners();
+
+        return reference.id;
+  }
+
+  
+  
+
   void _loadCartItems() async{
     QuerySnapshot query =    await FirebaseFirestore.instance.collection('users').doc(user.firebaseUser!.uid)
         .collection('cart').get();
